@@ -31,10 +31,34 @@ class HashTable:
 				else:
 					self.data[nextslot] = data #replace
 
-
-
 	def hashfunction(self, key, size):
 		return key%size
 
 	def rehash(self,oldhash,size):
 		return (oldhash + 1)%size
+
+	def get(self, key):
+		# there are some auguments: startslot(the initial hashvalue of the key by the hashfunction), data(the corresponding data of the key)
+		#stop( a boolean value indicating whether to stop or not, position (the position you indicated in the slot)),#found(indicator)
+
+		startslot = self.hashfunction(key, len(self.slots))
+		position = startslot
+		stop = False
+		found = False
+		data = None
+		while position is not None and not stop and not found :
+			if self.slots[position] == key:
+				found = True
+				data = self.data[position]
+			else:
+				position = self.rehash(position, len(self.slots))
+				if position == startslot:
+					stop = True
+		return data
+
+	def __getitem__(self, key):
+		return self.get(key)
+
+	def __setitem__(self, key, data):
+		self.put(key,data)
+
